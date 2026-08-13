@@ -1,0 +1,59 @@
+<div class="page-shell">
+  <header>
+    <h1>BSP</h1>
+    <div class="user" *ngIf="cliente">
+      <div class="avatar">{{ cliente.iniciales }}</div>
+      <div class="userinfo">
+        <p>{{ cliente.nombre }}</p>
+        <p>{{ cliente.nivel }}</p>
+      </div>
+      <button (click)="onLogout()" class="logout-button">Logout</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <h2>Estado de Cuenta</h2>
+
+    <div class="filters">
+      <label for="mes">Mes:</label>
+      <input
+        id="mes"
+        type="month"
+        [(ngModel)]="selectedMonth"
+        (ngModelChange)="loadStatement($event)"
+      />
+
+      <button (click)="downloadPDF()" [disabled]="descargando">
+        {{ descargando ? 'Generando…' : 'Descargar PDF' }}
+      </button>
+    </div>
+
+    <p *ngIf="cargando">Cargando movimientos…</p>
+
+    <table class="table" *ngIf="!cargando && statement.movimientos.length > 0">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Descripción</th>
+          <th>Tipo</th>
+          <th>Importe</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (mov of statement.movimientos; track $index) {
+          <tr>
+            <td>{{ mov.fecha | date }}</td>
+            <td>{{ mov.descripcion }}</td>
+            <td [ngClass]="mov.tipo">{{ mov.tipo }}</td>
+            <td>{{ mov.monto | currency:'MXN' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <p *ngIf="!cargando && statement.movimientos.length === 0">
+      {{ selectedMonth ? 'No hay movimientos para este mes.' : 'Selecciona un mes para ver tus movimientos.' }}
+    </p>
+  </div>
+</div>

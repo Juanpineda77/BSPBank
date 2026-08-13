@@ -1,0 +1,75 @@
+/* ============================
+   ESTILOS GLOBALES
+
+   Sólo va aquí lo que de verdad es transversal. El layout de cada
+   pantalla vive en el CSS de su componente: antes este archivo tenía
+   los estilos del login (.page, .auth-panel, .hero…) y se filtraban a
+   las demás vistas, deformándolas.
+=============================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: #fff;
+}
+
+/* Cada vista se envuelve en .page-shell, que sustituye al <body> que
+   antes vivía (indebidamente) dentro de los templates de componente. */
+app-root {
+  display: block;
+  min-height: 100vh;
+}
+
+.page-shell {
+  min-height: 100vh;
+}
+
+/* ============================
+   BOTÓN BASE
+=============================== */
+.btn {
+  padding: 14px;
+  background-color: #b00020;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn--bio {
+  background-color: #333;
+}
+
+.btn--bio-off {
+  background-color: #6b7280;
+}
+
+button[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ============================
+   VALIDACIÓN DE FORMULARIOS
+=============================== */
+.field-error {
+  display: block;
+  margin-top: 4px;
+  color: #b00020;
+  font-size: 0.8rem;
+  line-height: 1.3;
+}

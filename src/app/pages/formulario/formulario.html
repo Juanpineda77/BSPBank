@@ -1,0 +1,121 @@
+<div class="page-shell">
+  <div class="overlay">
+    <header>
+      <h1>BSP</h1>
+    </header>
+
+    <main class="main">
+      <section class="panel">
+        <div class="panel__body">
+          <p class="lead">Completa con tus datos</p>
+
+          <form class="form" (ngSubmit)="registro()" #formRef="ngForm">
+            <div class="field">
+              <label for="nombre" class="label">Nombre Completo:</label>
+              <input
+                id="nombre"
+                name="nombre"
+                [(ngModel)]="nombre"
+                type="text"
+                required
+                minlength="3"
+                class="input"
+                #nombreField="ngModel"
+              />
+              <small class="field-error" *ngIf="nombreField.invalid && nombreField.touched">
+                Escribe tu nombre completo (mínimo 3 caracteres).
+              </small>
+            </div>
+
+            <div class="field">
+              <label for="email" class="label">Correo Electrónico:</label>
+              <input
+                id="email"
+                name="email"
+                [(ngModel)]="email"
+                type="email"
+                required
+                email
+                class="input"
+                #emailField="ngModel"
+              />
+              <small class="field-error" *ngIf="emailField.invalid && emailField.touched">
+                Ingresa un correo válido.
+              </small>
+            </div>
+
+            <div class="field">
+              <label for="telefono" class="label">Teléfono:</label>
+              <input
+                id="telefono"
+                name="telefono"
+                [(ngModel)]="telefono"
+                type="tel"
+                required
+                pattern="\d{10}"
+                class="input"
+                #telField="ngModel"
+              />
+              <small class="field-error" *ngIf="telField.invalid && telField.touched">
+                Ingresa 10 dígitos, sin espacios ni guiones.
+              </small>
+            </div>
+
+            <div class="field">
+              <label for="fecha" class="label">Fecha de Nacimiento:</label>
+              <input
+                id="fecha"
+                name="fecha"
+                [(ngModel)]="fecha"
+                type="date"
+                required
+                class="input"
+              />
+            </div>
+
+            <div class="field">
+              <label for="password" class="label">Contraseña:</label>
+              <input
+                id="password"
+                name="password"
+                [(ngModel)]="password"
+                type="password"
+                required
+                minlength="8"
+                class="input"
+                #passField="ngModel"
+              />
+              <small class="field-error" *ngIf="passField.invalid && passField.touched">
+                Usa al menos 8 caracteres.
+              </small>
+            </div>
+
+            <div class="field">
+              <label for="ine" class="label">INE:</label>
+              <input id="ine" name="ine" [(ngModel)]="ine" type="text" required class="input" />
+            </div>
+
+            <div class="field">
+              <label for="rol" class="label">Rol:</label>
+              <select id="rol" name="rol" [(ngModel)]="rol" required class="input">
+                <option value="cliente">Cliente</option>
+                <option value="ejecutivo">Ejecutivo</option>
+                <option value="gerente">Gerente</option>
+              </select>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="btn" [disabled]="!formRef.valid || enviando">
+                {{ enviando ? 'Creando cuenta…' : 'Enviar' }}
+              </button>
+            </div>
+
+            <p class="form-footer">
+              ¿Ya tienes cuenta? <a routerLink="/login" class="link-accent">Inicia sesión</a>
+            </p>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

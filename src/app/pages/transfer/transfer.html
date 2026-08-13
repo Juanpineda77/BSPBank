@@ -1,0 +1,96 @@
+<div class="page-shell">
+  <header>
+    <h1>BSP</h1>
+    <div class="user">
+      <div class="avatar">{{ cliente?.iniciales }}</div>
+      <div class="userinfo">
+        <p class="nombre">{{ cliente?.nombre }}</p>
+        <p>{{ cliente?.nivel }}</p>
+      </div>
+      <button (click)="onLogout()" class="logout-button">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="transfer-container">
+      <form (ngSubmit)="enviarTransferencia()" #transferForm="ngForm">
+
+        <div class="card full-card">
+          <p class="title">Orden de Transferencia</p>
+
+          <label for="nombre_beneficiario">Nombre del beneficiario <span>*</span></label>
+          <input
+            id="nombre_beneficiario"
+            type="text"
+            name="nombre_beneficiario"
+            [(ngModel)]="transferencia.nombre_beneficiario"
+            required
+            minlength="3"
+          />
+
+          <label for="clabe_beneficiario">Cuenta destino <span>*</span></label>
+          <input
+            id="clabe_beneficiario"
+            type="text"
+            name="clabe_beneficiario"
+            [(ngModel)]="transferencia.clabe_beneficiario"
+            required
+            pattern="\d+"
+            #clabe="ngModel"
+          />
+          <small class="field-error" *ngIf="clabe.invalid && clabe.touched">
+            Ingresa un número de cuenta válido (solo dígitos).
+          </small>
+
+          <label for="autenticacion">Autenticación</label>
+          <select id="autenticacion" name="autenticacion" [(ngModel)]="transferencia.autenticacion">
+            <option value="app">App bancaria</option>
+            <option value="token">Token físico</option>
+          </select>
+
+          <label for="monto">Monto <span>*</span></label>
+          <input
+            id="monto"
+            type="number"
+            name="monto"
+            [(ngModel)]="transferencia.monto"
+            required
+            min="1"
+          />
+          <small class="field-error" *ngIf="saldoInsuficiente">
+            El monto supera tu saldo disponible.
+          </small>
+
+          <label for="moneda">Moneda <span>*</span></label>
+          <select id="moneda" name="moneda" [(ngModel)]="transferencia.moneda" required>
+            <option value="MXN">MXN — Peso mexicano</option>
+          </select>
+
+          <label for="concepto">Concepto <span>*</span></label>
+          <input
+            id="concepto"
+            type="text"
+            name="concepto"
+            [(ngModel)]="transferencia.concepto"
+            required
+            maxlength="60"
+          />
+
+          <div class="actions">
+            <button
+              type="submit"
+              class="btn--primary"
+              [disabled]="!transferForm.valid || saldoInsuficiente || enviando"
+            >
+              {{ enviando ? 'Enviando…' : 'Generar orden' }}
+            </button>
+            <button type="reset" class="btn">Limpiar</button>
+          </div>
+
+          <p class="privacy-note">Campos marcados con * son obligatorios.</p>
+        </div>
+
+      </form>
+    </div>
+  </main>
+</div>

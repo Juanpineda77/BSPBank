@@ -1,0 +1,153 @@
+.page-shell {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(145deg, #004d26, #00994d, #33cc66);
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Contenedor principal */
+.container {
+  width: 90%;
+  max-width: 850px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  margin: 50px auto;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  color: #222;
+}
+
+.container h2 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  color: #1d3a2f;
+}
+
+/* Sección de pago */
+.pago-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.pago-card label {
+  font-weight: 600;
+  color: #1a2d23;
+}
+
+.pago-card input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #aaa;
+  width: 120px;
+  font-size: 14px;
+  outline: none;
+}
+
+.pago-card input:focus {
+  border-color: #00a74d;
+}
+
+/* Botones */
+.btn {
+  background: linear-gradient(90deg, #00a74d, #00cc66);
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.2s ease;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+/* Tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+table th {
+  background: #d9f2e3;
+  padding: 10px;
+  font-weight: bold;
+  border-bottom: 2px solid #c2e8d3;
+}
+
+table td {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #222;
+}
+
+/* Mensaje sin datos */
+.alert {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 15px;
+  color: #333;
+}
+
+/* ---------- Header de página (mismo patrón en todas las vistas) ---------- */
+/* page-header-shared */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .75rem 1.5rem;
+  background: #000;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .45);
+}
+header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ef4444;
+}
+header .user {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+}
+header .avatar {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: #d1d5db;
+  color: #111;
+  font-weight: 700;
+  font-size: .85rem;
+}
+header .userinfo p {
+  margin: 0;
+  font-size: .85rem;
+  line-height: 1.25;
+}
+header .userinfo p:first-child { font-weight: 600; }
+header .userinfo p:last-child { opacity: .75; font-size: .75rem; }
+header .logout-button {
+  padding: .45rem .9rem;
+  border: 0;
+  border-radius: .4rem;
+  background: #b00020;
+  color: #fff;
+  font: 600 .85rem system-ui, sans-serif;
+  cursor: pointer;
+}
+header .logout-button:hover { background: #8e0019; }

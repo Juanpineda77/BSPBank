@@ -1,0 +1,278 @@
+.page-shell {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(145deg, #0033cc, #0066ff, #0099ff);
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+header {
+  width: 100%;
+  flex-shrink: 0;
+  background: #000;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+/* Logo BSP */
+header h1 {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #ef4444;
+  margin: 0;
+}
+
+header .user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 150px; 
+  justify-content: flex-end; 
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+header .user-name {
+  max-width: 120px;  /* ✅ límite al texto */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* ✅ … cuando el texto es largo */
+}
+
+
+
+
+/* Avatar Iniciales */
+header .avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: black;
+  flex-shrink: 0;
+}
+
+/* Info Usuario */
+header .userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* ✅ Ahora se alinea a la izquierda */
+  text-align: left;
+}
+
+
+header .userinfo p {
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* ✅ Nombre en negritas */
+header .userinfo p:first-child {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: white;
+}
+
+header .userinfo p:last-child {
+  font-size: 0.80rem;
+  color: #d1d5db;
+  font-weight: 400; /* Normal */
+}
+
+/* Botón Logout sin negritas */
+header .logout-button {
+  margin-left: 0.5rem;
+  padding: 0.45rem 1rem;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-right: 3rem;
+}
+
+
+
+
+/* Hover Logout */
+header .logout-button:hover {
+  background: #dc2626;
+}
+
+/* Contenedor principal de la card */
+.card {
+  background: #fff;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 900px;
+  padding: 28px 22px;
+  margin: 30px auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card h2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+/* Filtros */
+.filters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.filters label {
+  font-weight: 600;
+  color: #333;
+}
+
+.filters input[type="month"] {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  color: #222;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.filters input[type="month"]:focus {
+  border-color: #007bff;
+}
+
+/* Botón de descargar */
+button {
+  background: linear-gradient(90deg, #0066ff, #007bff);
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.2s ease;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* Tabla */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.table th {
+  background: #f4f9ff;
+  text-align: left;
+  padding: 12px;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 2px solid #e4e8ee;
+}
+
+.table td {
+  padding: 12px;
+  color: #222;
+  border-bottom: 1px solid #eee;
+}
+
+/* Color según tipo de movimiento */
+td.deposito,
+td.transferencia_entrada {
+  color: #0c8c39;
+  font-weight: bold;
+}
+
+td.retiro,
+td.transferencia_salida,
+td.compra {
+  color: #cc1a1a;
+  font-weight: bold;
+}
+
+/* Mensaje sin datos */
+p {
+  text-align: center;
+  font-size: 15px;
+  color: #666;
+  margin: 10px 0;
+}
+
+/* ---------- Header de página (mismo patrón en todas las vistas) ---------- */
+/* page-header-shared */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .75rem 1.5rem;
+  background: #000;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .45);
+}
+header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ef4444;
+}
+header .user {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+}
+header .avatar {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: #d1d5db;
+  color: #111;
+  font-weight: 700;
+  font-size: .85rem;
+}
+header .userinfo p {
+  margin: 0;
+  font-size: .85rem;
+  line-height: 1.25;
+}
+header .userinfo p:first-child { font-weight: 600; }
+header .userinfo p:last-child { opacity: .75; font-size: .75rem; }
+header .logout-button {
+  padding: .45rem .9rem;
+  border: 0;
+  border-radius: .4rem;
+  background: #b00020;
+  color: #fff;
+  font: 600 .85rem system-ui, sans-serif;
+  cursor: pointer;
+}
+header .logout-button:hover { background: #8e0019; }

@@ -1,0 +1,200 @@
+/* ---------- Variables ---------- */
+:root{
+  --white-40: rgba(255,255,255,.40);
+  --ring: rgba(0,0,0,.10);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.35);
+  --shadow-card: 0 8px 22px rgba(0,0,0,.28);
+
+  --text:#fff;
+  --ink:#111;
+  --ink-muted:#374151;
+
+  --danger:#dc2626;     /* rojo fuerte */
+  --ok:#22c55e;         /* verde */
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  --gap: 1.5rem;
+  --pad: 1.5rem;
+
+  --max-6xl: 72rem;     /* aprox max-w-6xl */
+
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+}
+
+/* ---------- Base ---------- */
+*{ box-sizing: border-box; }
+.page-shell{ height: 100%; }
+.page-shell{
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  color: var(--text);
+}
+
+/* ---------- Fondo con imagen + overlay ---------- */
+.page{
+  min-height: 100vh;
+  background-image: url('/assets/degradado.png'); /* Angular: assets/... */
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.overlay{
+  min-height: 100vh;
+  background: rgba(0,0,0,.20);
+}
+
+/* ---------- Utilidad sr-only ---------- */
+.sr-only{
+  position:absolute;
+  width:1px; height:1px;
+  padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0);
+  white-space:nowrap; border:0;
+}
+
+/* ---------- App Bar ---------- */
+.appbar{
+  width:100%;
+  background:#000;
+  padding: .75rem var(--pad);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow: var(--shadow-lg);
+}
+.brand{
+  display:flex; align-items:center; gap:.75rem;
+  text-decoration:none; color:inherit;
+}
+.brand__img{
+  height:4rem; width:auto;
+  user-select:none; pointer-events:none;
+}
+
+/* Usuario */
+.user{
+  display:flex; align-items:center; gap:.75rem;
+}
+.avatar{
+  height:2.5rem; width:2.5rem;
+  border-radius:999px;
+  object-fit:cover;
+  background:#d1d5db;
+}
+.user__text{ text-align:right; line-height:1.1; }
+.user__name{ margin:0; font-weight:600; color: white;}
+.user__role{ margin:0; font-size:.75rem; color:#d1d5db; }
+
+/* ---------- Contenedor principal ---------- */
+.container{
+  max-width: var(--max-6xl);
+  margin-inline: auto;
+  padding: 1.5rem 1rem;
+}
+@media (min-width: 768px){
+  .container{ padding: 1.5rem 1.5rem; }
+}
+@media (min-width: 1024px){
+  .container{ padding: 1.5rem 2rem; }
+}
+
+/* ---------- Grid 2x2 (stack en móvil) ---------- */
+.grid-two{
+  display:grid;
+  gap: var(--gap);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px){
+  .grid-two{ grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- Card “glass” ---------- */
+.card{
+  background: var(--white-40);
+  color: #000;
+  border-radius: var(--radius-2xl);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(8px);
+  display:flex; flex-direction:column;
+}
+.card--glass{
+  background: rgba(255,255,255,.40);
+  color: #000;
+} /* por si luego quieres variantes */
+.card--minh{ min-height: 250px; }
+
+.card__title{
+  margin:0;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 600;
+  text-align: center;
+}
+.card__title--spaced{ margin-bottom: 1rem; }
+
+.card__center{
+  flex:1;
+  display:flex; align-items:center; justify-content:center;
+}
+.icon-xxl{
+  width:7rem; height:7rem;
+  color:#000;
+}
+
+/* ---------- Lista de “Consultar cuentas” ---------- */
+.list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1.25rem; }
+.list__item{
+  display:flex; align-items:flex-start; gap:1rem;
+}
+.chip{
+  width:3rem; height:3rem;
+  border-radius:999px;
+  flex: 0 0 auto;
+}
+.chip--danger{ background:#dc2626; }
+
+.list__text{ flex:1; }
+.list__name{ margin:0; font-weight:600; line-height:1.1; color:#111; }
+.list__meta{ margin:.15rem 0 0; font-size:.9rem; color:#374151; }
+.list__amount{
+  margin-left:auto;
+  font-weight:700;
+  color:#111;
+}
+.list__amount--out{ color:#111; } /* si quieres rojo, usa #ef4444 */
+
+/* ---------- Solicitudes de crédito ---------- */
+.stack{ display:flex; flex-direction:column; gap:.75rem; }
+.pill{
+  border-radius: 0.75rem;
+  padding: .75rem 1rem;
+  border: 1px solid var(--ring);
+}
+.pill--warn{ background: rgba(252, 165, 165, .90); } /* rojo 300 /90% aprox */
+.pill--ok{ background: rgba(134, 239, 172, .90); }   /* verde 300 /90% aprox */
+
+.pill__name{ margin:0; font-weight:600; color:#111; }
+.pill__meta{ margin:.15rem 0 0; font-size:.9rem; color:#111; }
+
+/* ---------- Accesibilidad: foco visible ---------- */
+a:focus,
+button:focus,
+.brand:focus{
+  outline:2px solid #60a5fa;
+  outline-offset:2px;
+}
+
+.logout-button {
+  margin-left: .75rem;
+  padding: .45rem .9rem;
+  border: 0;
+  border-radius: .4rem;
+  background: #b00020;
+  color: #fff;
+  font: 600 .85rem system-ui, sans-serif;
+  cursor: pointer;
+}
+.logout-button:hover { background: #8e0019; }

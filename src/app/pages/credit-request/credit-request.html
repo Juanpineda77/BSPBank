@@ -1,0 +1,60 @@
+<div class="page-shell">
+  <header>
+    <h1>BSP</h1>
+    <div class="user" *ngIf="cliente">
+      <div class="avatar">{{ cliente.iniciales }}</div>
+      <div class="userinfo">
+        <p>{{ cliente.nombre }}</p>
+        <p>{{ cliente.nivel }}</p>
+      </div>
+      <button (click)="onLogout()" class="logout-button">Logout</button>
+    </div>
+  </header>
+
+  <div class="card form">
+    <h2>Solicitud de Crédito</h2>
+
+    <p class="oferta" *ngIf="oferta">
+      {{ oferta.titulo }} — tasa {{ oferta.interes }} % TIN
+    </p>
+
+    <form (ngSubmit)="enviarSolicitud()">
+      <label for="ingreso">Ingreso mensual:</label>
+      <input
+        id="ingreso"
+        type="number"
+        name="ingreso"
+        [(ngModel)]="ingreso"
+        (ngModelChange)="calcular()"
+        min="1"
+        required
+      />
+
+      <label for="monto">Monto solicitado:</label>
+      <input
+        id="monto"
+        type="number"
+        name="monto"
+        [(ngModel)]="monto"
+        (ngModelChange)="calcular()"
+        min="1"
+        [max]="oferta?.monto ?? null"
+        required
+      />
+
+      <label for="plazo">Meses a pagar</label>
+      <select id="plazo" name="plazo" [(ngModel)]="plazo" (ngModelChange)="calcular()">
+        <option *ngFor="let p of plazos" [ngValue]="p">{{ p }}</option>
+      </select>
+
+      <button type="submit" [disabled]="!formValido || enviando">
+        {{ enviando ? 'Enviando…' : 'Enviar solicitud' }}
+      </button>
+    </form>
+
+    <div class="simulador" *ngIf="cuotaMensual">
+      <p>Pago mensual estimado: {{ cuotaMensual | currency:'MXN' }}</p>
+      <p>Total a pagar: {{ total | currency:'MXN' }}</p>
+    </div>
+  </div>
+</div>

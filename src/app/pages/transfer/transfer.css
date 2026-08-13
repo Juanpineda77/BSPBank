@@ -1,0 +1,135 @@
+/* Reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.page-shell {
+  height: 100%;
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  background: linear-gradient(to bottom right, #cfc9c1, #4d45e5, #700e76);
+  overflow-x: hidden;
+}
+
+/* Header */
+header {
+  width: 100%;
+  background: black;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  position: fixed;
+}
+
+header h1 {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #ef4444;
+}
+
+header .user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: black;
+}
+
+.logout-button {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: .5rem;
+  padding: .5rem 1rem;
+  cursor: pointer;
+}
+
+/* Main */
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem 1rem;
+}
+
+/* Single Card container */
+.transfer-container {
+  width: 100%;
+  max-width: 550px;
+}
+
+/* Card */
+.card {
+  background: rgba(255,255,255,0.85);
+  border-radius: 1rem;
+  padding: 2rem;
+  color: black;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  color: #111;
+}
+
+input, select {
+  width: 100%;
+  padding: .75rem;
+  margin-top: .5rem;
+  border-radius: .5rem;
+  border: none;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn, .btn--primary {
+  padding: .6rem 1.2rem;
+  border: none;
+  border-radius: .5rem;
+  cursor: pointer;
+}
+
+.btn {
+  background: #ef4444;
+  color: white;
+}
+.btn:hover { background: #c53030; }
+
+.btn--primary {
+  background: #13aa39;
+  color: white;
+}
+.btn--primary:hover { background: #0f8d31; }
+
+.privacy-note {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: .75rem;
+  color: #333;
+}

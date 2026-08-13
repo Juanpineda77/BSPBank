@@ -1,0 +1,223 @@
+/* Fondo general degradado */
+.page-shell {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #0072ff, #6dd5fa, #ffffff);
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+    header {
+      width: 100%;
+      flex-shrink: 0;
+      background: black;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    header h1 {
+      font-size: 1.875rem;
+      font-weight: bold;
+      color: #ef4444;
+      margin: 0;
+    }
+
+    header .user {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    header .avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: black;
+      flex-shrink: 0;
+    }
+
+    header .userinfo p {
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    header .userinfo p:first-child {
+      font-weight: 600;
+    }
+
+    header .userinfo p:last-child {
+      font-size: 0.875rem;
+      color: #d1d5db;
+    }
+
+    header .logout-button {
+      margin-left: 1rem;
+      margin-right: 3rem;
+      padding: 0.5rem 1rem;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    header .logout-button:hover {
+      background: #dc2626;
+    }
+
+
+/* Contenedor general */
+.container {
+  padding: 25px;
+  text-align: center;
+}
+
+/* Card del formulario */
+.card.form {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-radius: 14px;
+  width: 380px;
+  padding: 28px 22px;
+  margin: 20px auto;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 6rem;
+}
+
+.card.form h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+  color: #0b2c52;
+}
+
+/* Estilo del formulario */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  text-align: left;
+  font-weight: bold;
+  color: #0b2c52;
+}
+
+input, select {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #aac7ff;
+  font-size: 15px;
+  outline: none;
+  background: #f7fbff;
+  transition: all 0.25s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: #0066ff;
+  background: #fff;
+}
+
+/* Botón principal */
+button[type="submit"] {
+  width: 100%;
+  background: linear-gradient(90deg, #0066ff, #007bff);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Simulador */
+.simulador {
+  background: #e9f3ffbb;
+  padding: 14px;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.07);
+  margin-top: 10px;
+}
+
+.simulador p {
+  font-size: 14px;
+  margin: 5px 0;
+  font-weight: 600;
+  color: #0b2c52;
+}
+
+/* ---------- Header de página (mismo patrón en todas las vistas) ---------- */
+/* page-header-shared */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .75rem 1.5rem;
+  background: #000;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .45);
+}
+header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ef4444;
+}
+header .user {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+}
+header .avatar {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: #d1d5db;
+  color: #111;
+  font-weight: 700;
+  font-size: .85rem;
+}
+header .userinfo p {
+  margin: 0;
+  font-size: .85rem;
+  line-height: 1.25;
+}
+header .userinfo p:first-child { font-weight: 600; }
+header .userinfo p:last-child { opacity: .75; font-size: .75rem; }
+header .logout-button {
+  padding: .45rem .9rem;
+  border: 0;
+  border-radius: .4rem;
+  background: #b00020;
+  color: #fff;
+  font: 600 .85rem system-ui, sans-serif;
+  cursor: pointer;
+}
+header .logout-button:hover { background: #8e0019; }

@@ -1,0 +1,204 @@
+/* ---------- Base y variables ---------- */
+:root {
+  --radius-lg: 1rem;
+  --shadow-strong: 0 10px 40px rgba(0,0,0,.45);
+  --bg-900: #000000;
+  --text: #ffffff;
+  --accent: #dc2626;
+  --accent-hover: #b91c1c;
+  --focus: #38bdf8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.page-shell {
+  min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto; 
+}
+
+.page-shell {
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica Neue, Arial;
+  color: var(--text);
+  background: #000;
+}
+
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  background: url(/assets/fondo.png) center / cover no-repeat fixed;
+}
+
+.overlay {
+  width: 100%;
+  min-height: 100%;
+  background: rgba(0,0,0,.6);
+  display: block;
+}
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      width: 100%;
+      flex-shrink: 0;
+      background: black;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    header h1 {
+      font-size: 1.875rem;
+      font-weight: bold;
+      color: #ef4444;
+      margin: 0;
+    }
+
+    header .user {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    header .avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: black;
+      flex-shrink: 0;
+    }
+
+    header .userinfo p {
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    header .userinfo p:first-child {
+      font-weight: 600;
+    }
+
+    header .userinfo p:last-child {
+      font-size: 0.875rem;
+      color: #d1d5db;
+    }
+
+    header .logout-button {
+      margin-left: 1rem;
+      padding: 0.5rem 1rem;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    header .logout-button:hover {
+      background: #dc2626;
+    }
+
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.logo { height: 3rem; }
+
+/* Main layout */
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; 
+  padding: 2rem 1rem;
+}
+
+/* Card */
+.panel {
+  width: 100%;
+  max-width: 480px;
+  background: #000;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-strong);
+  padding: 2rem;
+}
+
+.panel__body { width: 100%; }
+
+/* Texto */
+.lead {
+  font-size: 2.25rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: white;
+  font-weight: 700;
+}
+
+/* Formulario */
+.form { display: grid; gap: 1rem; }
+
+.field { display: flex; flex-direction: column; gap: .5rem; }
+
+.label { 
+  font-weight: 600; 
+  color: white;
+}
+
+.input {
+  width: 100%;
+  border: none;
+  border-radius: .5rem;
+  padding: .75rem 1rem;
+  background: #fff;
+  color: #000;
+}
+
+.input:focus {
+  outline: 2px solid var(--focus);
+}
+
+/* Botón */
+.btn {
+  border: none;
+  border-radius: .5rem;
+  padding: .75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-color: orange;
+}
+
+.btn--primary {
+  background: linear-gradient(90deg, #dc2626, orange);
+  color: #000;
+  font-weight: 700;    
+}
+
+.btn--primary:hover { 
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.3);
+}
+
+/* Aviso privacidad */
+.privacy-note {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: .75rem;
+  color: #ccc;
+}
+
+.page-shell {
+  height: auto !important;
+}

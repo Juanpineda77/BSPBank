@@ -1,0 +1,265 @@
+/* Reset básico */
+    * {
+      box-sizing: border-box;
+    }
+    .page-shell {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* evita scroll innecesario */
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Fondo */
+    .page-shell {
+      background: linear-gradient(to bottom right, #7f1d1d, #5b21b6, #000);
+      color: white;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      flex-shrink: 0;
+      background: black;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    header h1 {
+      font-size: 1.875rem;
+      font-weight: bold;
+      color: #ef4444;
+      margin: 0;
+    }
+
+    header .user {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    header .avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: black;
+      flex-shrink: 0;
+    }
+
+    header .userinfo p {
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    header .userinfo p:first-child {
+      font-weight: 600;
+    }
+
+    header .userinfo p:last-child {
+      font-size: 0.875rem;
+      color: #d1d5db;
+    }
+
+    header .logout-button {
+      margin-left: 1rem;
+      padding: 0.5rem 1rem;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    header .logout-button:hover {
+      background: #dc2626;
+    }
+
+    /* Main */
+    main {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 1rem; /* separacion entre filas */
+      overflow: hidden;
+    }
+
+    /* Fila superior */
+    .top-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      height: 100%;
+    }
+    @media (min-width: 768px) {
+      .top-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* Fila inferior */
+    .bottom-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Ahora 3 columnas */
+      gap: 1rem;
+      height: 100%;
+    }
+
+
+    /* Card */
+    .card {
+      background: rgba(255,255,255,0.75);
+      border-radius: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      padding: 1rem;
+      color: black;
+      overflow: hidden;
+    }
+
+
+    /* Balance */
+    .balance .title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    .balance .amount {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .balance .status {
+      font-size: 0.875rem;
+      color: #1f2937;
+      margin-top: 0.5rem;
+      margin-bottom: 0.2rem;
+    }
+    .balance button {
+      margin-top: 1.5rem;
+      padding: 0.5rem 1rem;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-right: 3rem;
+    }
+    .balance button:hover {
+      background: #dc2626;
+    }
+
+    /* Transfer */
+    .transfer p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .transfer .people {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .transfer .person {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .transfer .person .icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      background: #ef4444;
+      border-radius: 50%;
+    }
+    .transfer .person p {
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    .btn-credito {
+  margin-top: 1rem;
+  padding: 0.4rem 1rem;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+    /* Actividad */
+    .activity {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      grid-column: span 1;
+    }
+    .activity .title {
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+    }
+    .activity .item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .activity .item .icon {
+      width: 2rem;
+      height: 2rem;
+      background: #ef4444;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .activity .item .details p {
+      margin: 0;
+    }
+    .activity .item .details p:first-child {
+      font-weight: 600;
+    }
+    .activity .item .details p:last-child {
+      font-size: 0.875rem;
+      color: #1f2937;
+    }
+    .activity .item .amount {
+      margin-left: auto;
+      font-weight: bold;
+      color: #f87171;
+    }
+
+    /* Tarjetas */
+    .cards .title {
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+    }
+    .cards .list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .cards .item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .cards .item .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      background: #9ca3af;
+      border-radius: 0.25rem;
+    }
+    .cards .item p {
+      font-size: 0.875rem;
+      margin: 0;
+    }
+

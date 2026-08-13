@@ -1,0 +1,116 @@
+<div class="page-shell">
+  <header>
+    <h1>BSP</h1>
+    <div class="user">
+      <div class="avatar">{{ cliente?.iniciales }}</div>
+      <div class="userinfo">
+        <p>{{ cliente?.nombre }}</p>
+        <p>{{ cliente?.nivel }}</p>
+      </div>
+      <button (click)="onLogout()" class="logout-button">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Fila superior -->
+    <div class="top-row">
+      <!-- Balance -->
+      <div class="card balance">
+        <p class="title">BSP Balance</p>
+        <p class="amount">{{ cliente?.saldo | currency:'MXN' }}</p>
+        <p class="status">Available</p>
+
+        <button routerLink="/transfer">Transfer</button>
+        <button (click)="goToAccountStatement()">Estado de cuenta</button>
+
+        <ng-container *ngIf="biometriaSoportada">
+          <button
+            *ngIf="!biometriaActiva"
+            (click)="activarBiometria()"
+            class="btn btn--bio"
+            [disabled]="procesandoBiometria"
+          >
+            {{ procesandoBiometria ? 'Procesando…' : 'Activar inicio con huella' }}
+          </button>
+
+          <button
+            *ngIf="biometriaActiva"
+            (click)="desactivarBiometria()"
+            class="btn btn--bio btn--bio-off"
+            [disabled]="procesandoBiometria"
+          >
+            {{ procesandoBiometria ? 'Procesando…' : 'Desactivar inicio con huella' }}
+          </button>
+        </ng-container>
+      </div>
+
+      <!-- Transferencias frecuentes -->
+      <div class="card transfer">
+        <p>Transferir de nuevo</p>
+        <div class="people">
+          <div class="person">
+            <div class="icon"></div>
+            <p>Luis Fernández</p>
+          </div>
+          <div class="person">
+            <div class="icon"></div>
+            <p>Andrea Molina</p>
+          </div>
+          <div class="person">
+            <div class="icon"></div>
+            <p>Diego Castro</p>
+          </div>
+          <div class="person">
+            <div class="icon"></div>
+            <p>Valeria Sánchez</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila inferior -->
+    <div class="bottom-row">
+      <!-- Actividad -->
+      <div class="card activity">
+        <p class="title">Actividad Reciente</p>
+        <div class="item">
+          <div class="icon"></div>
+          <div class="details">
+            <p>Roberto Salinas</p>
+            <p>Lunes 9, dinero enviado – "Viaje"</p>
+          </div>
+          <p class="amount">- $500,000</p>
+        </div>
+        <div class="item">
+          <div class="icon"></div>
+          <div class="details">
+            <p>Daniela Ruiz</p>
+            <p>Viernes 6, dinero enviado – "Evento"</p>
+          </div>
+          <p class="amount">- $860,000</p>
+        </div>
+      </div>
+
+      <div class="card credit-card-option">
+        <h3>Tu Crédito</h3>
+        <p>Consulta tu crédito activo y tus pagos recientes</p>
+        <button routerLink="/credit-active" class="btn-credito">Ver Crédito</button>
+      </div>
+
+      <!-- Tarjetas -->
+      <div class="card cards">
+        <p class="title">Mis tarjetas</p>
+        <div class="list">
+          <div class="item">
+            <div class="icon"></div>
+            <p>Visa, débito • -2491</p>
+          </div>
+          <div class="item">
+            <div class="icon"></div>
+            <p>Visa, crédito • -5679</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

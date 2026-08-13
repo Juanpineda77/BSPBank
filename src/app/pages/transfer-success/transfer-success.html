@@ -1,0 +1,34 @@
+<div class="page-shell">
+  <header>
+    <h1>BSP</h1>
+    <div class="user">
+      <div class="avatar">{{ cliente?.iniciales }}</div>
+      <div class="userinfo">
+        <p class="nombre">{{ cliente?.nombre }}</p>
+        <p>{{ cliente?.nivel }}</p>
+      </div>
+      <button (click)="onLogout()" class="logout-button">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="success-card">
+      <h2>✅ Transferencia exitosa</h2>
+      <div>{{ fechaHoy | date:'dd/MM/yyyy' }}</div>
+      <p>Tu comprobante ya se encuentra disponible.</p>
+
+      <button
+        class="btn"
+        *ngIf="comprobante"
+        (click)="descargarComprobante()"
+        [disabled]="descargando"
+      >
+        {{ descargando ? 'Descargando…' : 'Descargar comprobante' }}
+      </button>
+
+      <button class="btn" (click)="goToCliente()">
+        Volver al inicio
+      </button>
+    </div>
+  </main>
+</div>

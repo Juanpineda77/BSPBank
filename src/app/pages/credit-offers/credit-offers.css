@@ -1,0 +1,79 @@
+
+.page-shell {
+  background: linear-gradient(135deg, #004e92, #000428);
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card principal */
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 25px;
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  width: 90%;
+  max-width: 650px;
+  text-align: center;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Título */
+.card h2 {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+/* Lista de ofertas */
+.offers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Tarjeta individual */
+.offer-card {
+  background: rgba(255,255,255,0.15);
+  padding: 20px;
+  width: 250px;
+  border-radius: 12px;
+  text-align: left;
+  backdrop-filter: blur(6px);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: transform 0.3s;
+}
+
+.offer-card:hover {
+  transform: scale(1.05);
+}
+
+/* Título de la oferta */
+.offer-card h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #00e6ff;
+}
+
+/* Botón */
+button {
+  width: 100%;
+  background: #007bff;
+  color: white;
+  font-size: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #0056c1;
+}

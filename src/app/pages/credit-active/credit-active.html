@@ -1,0 +1,53 @@
+<div class="page-shell">
+  <header>
+    <h1>BSP</h1>
+    <div class="user" *ngIf="cliente">
+      <div class="avatar">{{ cliente.iniciales }}</div>
+      <div class="userinfo">
+        <p>{{ cliente.nombre }}</p>
+        <p>{{ cliente.nivel }}</p>
+      </div>
+      <button (click)="onLogout()" class="logout-button">Logout</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>Crédito Activo</h2>
+
+    <div *ngIf="loading" class="loading">Cargando crédito…</div>
+
+    <div *ngIf="credit && !loading" class="card">
+      <h3>Línea de Crédito Aprobada</h3>
+
+      <div class="detail">
+        <span>Límite:</span>
+        <strong>{{ credit.limite_credito | currency:'MXN' }}</strong>
+      </div>
+
+      <div class="detail">
+        <span>Saldo Usado:</span>
+        <strong>{{ credit.saldo_usado | currency:'MXN' }}</strong>
+      </div>
+
+      <div class="detail" *ngIf="credit.interes_mensual != null">
+        <span>Interés Mensual:</span>
+        <strong>{{ credit.interes_mensual * 100 | number:'1.0-2' }}%</strong>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn" (click)="goToPayments()">Ver Pagos</button>
+        <button class="btn secondary" (click)="goToOffers()">Ofertas de Crédito</button>
+        <button class="btn danger" (click)="goToDashboard()">Volver a Cliente</button>
+      </div>
+    </div>
+
+    <div *ngIf="!credit && !loading" class="no-credit">
+      <p>No tienes un crédito activo actualmente.</p>
+
+      <div class="btn-group">
+        <button class="btn secondary" (click)="goToOffers()">Solicitar Crédito</button>
+        <button class="btn danger" (click)="goToDashboard()">Volver a Cliente</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<div class="page-shell">
+  <div class="card">
+    <h2>Ofertas de Crédito</h2>
+
+    <div class="offers" *ngFor="let o of offers">
+      <div class="offer-card">
+        <h3>{{ o.titulo }}</h3>
+        <p>Hasta: {{ o.monto | currency:'MXN' }}</p>
+        <p>Tasa: {{ o.interes }} % TIN</p>
+        <button (click)="solicitar(o)" [disabled]="validando">
+          {{ validando ? 'Validando…' : 'Solicitar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
