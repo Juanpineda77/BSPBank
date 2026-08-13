@@ -1,4 +1,4 @@
-// server.js (listo — WebAuthn reescrito desde cero)
+// API de BSPBank: autenticación, crédito, transferencias y WebAuthn.
 const express = require('express');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
@@ -20,37 +20,87 @@ const {
 
 const app = express();
 const port = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'cambiame';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
+const IS_PROD = process.env.NODE_ENV === 'production';
 
-app.use(cors());
+// El frontend, para armar los enlaces de los correos y validar WebAuthn.
+const APP_URL = process.env.APP_URL || 'http://localhost:4200';
+
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
+const JWT_SECRET = process.env.JWT_SECRET || (IS_PROD ? null : 'clave-de-desarrollo');
+
+// Un secreto por defecto en producción permitiría a cualquiera firmar
+// tokens válidos: mejor no arrancar que arrancar inseguro.
+if (!JWT_SECRET) {
+  console.error('Falta JWT_SECRET. Defínelo en el entorno antes de arrancar en producción.');
+  process.exit(1);
+}
+
+// En producción sólo se aceptan los orígenes declarados en CORS_ORIGINS
+// (lista separada por comas). En desarrollo se permite cualquiera.
+const allowedOrigins = (process.env.CORS_ORIGINS || APP_URL)
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean);
+
+app.use(cors(IS_PROD ? { origin: allowedOrigins, credentials: true } : {}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- WebAuthn config (ajusta ORIGIN y RP_ID para producción) ---
-const RP_NAME = 'BSP Bank';
-const RP_ID = 'localhost'; // EN PRODUCCIÓN: tu dominio (sin https)
-const ORIGIN = 'http://localhost:4200'; // Cambia si tu frontend corre en otro puerto
+// --- WebAuthn ---
+// RP_ID es el dominio (sin protocolo ni puerto) y ORIGIN la URL completa
+// del frontend. Si no coinciden con el sitio real, el navegador rechaza
+// la credencial, así que en producción vienen del entorno.
+const RP_NAME = process.env.RP_NAME || 'BSP Bank';
+const RP_ID = process.env.RP_ID || new URL(APP_URL).hostname;
+const ORIGIN = process.env.WEBAUTHN_ORIGIN || APP_URL;
 
-// challengeStore temporal en memoria: challengeStore[email] = <base64url string>
+// Almacén temporal de challenges. Al vivir en memoria, sólo funciona con
+// una instancia: para escalar horizontalmente hay que moverlo a Redis o
+// a la base de datos.
 const challengeStore = {};
-// -----------------------------------------------------------------
 
-// Conexión a MySQL
-let db;
+// --- Conexión a MySQL ---
+// Pool y no una conexión suelta: los proveedores administrados cierran
+// las conexiones inactivas, y una conexión única no se reconecta, así
+// que la API quedaría caída hasta reiniciarla a mano.
+const db = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  port: Number(process.env.DB_PORT) || 3306,
+  waitForConnections: true,
+  connectionLimit: Number(process.env.DB_POOL_SIZE) || 10,
+  queueLimit: 0,
+  enableKeepAlive: true
+});
+
+// Verificación al arrancar: antes el servidor seguía vivo con la base
+// caída y cada petición devolvía un 500 genérico sin explicación.
 (async () => {
   try {
-    db = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME
-    });
-    console.log('Conectado a MySQL exitosamente!');
+    const conn = await db.getConnection();
+    await conn.ping();
+    conn.release();
+    console.log(`Conectado a MySQL (${process.env.DB_NAME})`);
   } catch (err) {
-    console.error('Error conectando a MySQL:', err.message);
+    console.error('No se pudo conectar a MySQL:', err.message);
+    console.error('Revisa DB_HOST, DB_USER, DB_PASS y DB_NAME en tu archivo .env');
+    process.exit(1);
   }
 })();
+
+// Sonda de salud: útil para el health check del proveedor de hosting.
+app.get('/health', async (_req, res) => {
+  try {
+    const conn = await db.getConnection();
+    await conn.ping();
+    conn.release();
+    res.json({ status: 'ok', db: 'up' });
+  } catch {
+    res.status(503).json({ status: 'error', db: 'down' });
+  }
+});
 
 // Middleware para validar JWT (USAR en rutas protegidas)
 const authMiddleware = (req, res, next) => {
@@ -148,7 +198,7 @@ app.post('/password-reset-request', async (req, res) => {
     [token, expireTime, email]
   );
 
-  const resetLink = `http://localhost:4200/reset-password?token=${token}`;
+  const resetLink = `${APP_URL}/reset-password?token=${token}`;
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -378,40 +428,75 @@ app.get('/account-statement/:userId', authMiddleware, async (req, res) => {
 
 // Transferencias entre cuentas
 app.post('/transferir', authMiddleware, async (req, res) => {
-  const { nombre_beneficiario, clabe_beneficiario, monto, concepto } = req.body;
-  const conn = db;
+  const { nombre_beneficiario, clabe_beneficiario, concepto } = req.body;
+  const monto = Number(req.body.monto);
+
+  // Sin esta validación, un monto negativo invertía la operación:
+  // restaba del destino y sumaba al origen.
+  if (!Number.isFinite(monto) || monto <= 0) {
+    return res.status(400).json({ message: 'El monto debe ser mayor a cero.' });
+  }
+  if (!nombre_beneficiario || !clabe_beneficiario) {
+    return res.status(400).json({ message: 'Faltan datos del beneficiario.' });
+  }
+
+  const conn = await db.getConnection();
 
   try {
+    await conn.beginTransaction();
+
+    // SELECT ... FOR UPDATE bloquea la fila hasta el commit: sin esto,
+    // dos transferencias simultáneas podrían pasar ambas la validación
+    // de saldo y dejar la cuenta en números rojos.
     const [origenRows] = await conn.execute(`
-      SELECT cu.id_cuenta, cu.saldo, c.email
+      SELECT cu.id_cuenta, cu.saldo, cu.estado, cu.limite_transferencia
       FROM cuentas cu
       JOIN clientes cli ON cli.id_cliente = cu.id_cliente
-      JOIN accounts c ON c.id_account = cli.account_id
-      WHERE c.id_account = ?
+      WHERE cli.account_id = ?
+      FOR UPDATE
     `, [req.user.id]);
-    
+
     if (origenRows.length === 0) {
+      await conn.rollback();
       return res.status(404).json({ message: 'Cuenta origen no encontrada.' });
     }
 
     const cuentaOrigen = origenRows[0];
 
-    if (monto > cuentaOrigen.saldo) {
+    if (cuentaOrigen.estado !== 'activa') {
+      await conn.rollback();
+      return res.status(403).json({ message: 'Tu cuenta no está activa.' });
+    }
+
+    if (String(cuentaOrigen.id_cuenta) === String(clabe_beneficiario)) {
+      await conn.rollback();
+      return res.status(400).json({ message: 'No puedes transferir a tu propia cuenta.' });
+    }
+
+    if (monto > Number(cuentaOrigen.saldo)) {
+      await conn.rollback();
       return res.status(400).json({ message: 'Saldo insuficiente.' });
     }
 
+    const limite = cuentaOrigen.limite_transferencia;
+    if (limite != null && monto > Number(limite)) {
+      await conn.rollback();
+      return res.status(400).json({
+        message: `El monto supera tu límite por transferencia (${limite}).`
+      });
+    }
+
     const [destinoRows] = await conn.execute(
-      'SELECT id_cuenta FROM cuentas WHERE id_cuenta = ?',
+      "SELECT id_cuenta FROM cuentas WHERE id_cuenta = ? AND estado = 'activa' FOR UPDATE",
       [clabe_beneficiario]
     );
 
     if (destinoRows.length === 0) {
+      await conn.rollback();
       return res.status(404).json({ message: 'Cuenta destino no encontrada.' });
     }
 
     const cuentaDestino = destinoRows[0].id_cuenta;
-
-    await conn.beginTransaction();
 
     await conn.execute('UPDATE cuentas SET saldo = saldo - ? WHERE id_cuenta = ?', [monto, cuentaOrigen.id_cuenta]);
     await conn.execute('UPDATE cuentas SET saldo = saldo + ? WHERE id_cuenta = ?', [monto, cuentaDestino]);
@@ -420,22 +505,60 @@ app.post('/transferir', authMiddleware, async (req, res) => {
       INSERT INTO transacciones (id_cuenta, tipo, monto, descripcion, fecha)
       VALUES (?, 'transferencia_salida', ?, ?, NOW())
     `, [cuentaOrigen.id_cuenta, monto * -1, `Transferencia a ${nombre_beneficiario} - ${concepto}`]);
-    
+
     await conn.execute(`
       INSERT INTO transacciones (id_cuenta, tipo, monto, descripcion, fecha)
       VALUES (?, 'transferencia_entrada', ?, ?, NOW())
     `, [cuentaDestino, monto, `Transferencia de ${req.user.email} - ${concepto}`]);
-    
+
     await conn.commit();
 
+    // A partir de aquí el dinero ya se movió. El comprobante y el correo
+    // son accesorios: si fallan no se puede deshacer la transferencia,
+    // así que se registran pero no convierten la respuesta en un error.
+    let fileName = null;
+    try {
+      fileName = await generarComprobante({ nombre_beneficiario, clabe_beneficiario, monto, concepto });
+    } catch (err) {
+      console.error('No se pudo generar el comprobante:', err.message);
+    }
+
+    if (fileName) {
+      enviarComprobantePorCorreo(req.user.email, fileName)
+        .catch(err => console.error('No se pudo enviar el comprobante:', err.message));
+    }
+
+    res.json({ message: 'Transferencia realizada con éxito', comprobante: fileName });
+
+  } catch (error) {
+    console.error(error);
+    try { await conn.rollback(); } catch {}
+    res.status(500).json({ message: 'Error al realizar transferencia' });
+  } finally {
+    // Sin esto el pool se agota tras unas cuantas transferencias.
+    conn.release();
+  }
+});
+
+/** Genera el PDF del comprobante y resuelve cuando el archivo está escrito. */
+function generarComprobante({ nombre_beneficiario, clabe_beneficiario, monto, concepto }) {
+  return new Promise((resolve, reject) => {
     const comprobantesDir = path.join(__dirname, 'comprobantes');
-    if (!fs.existsSync(comprobantesDir)) fs.mkdirSync(comprobantesDir);
+    if (!fs.existsSync(comprobantesDir)) fs.mkdirSync(comprobantesDir, { recursive: true });
 
     const fileName = `comprobante_${Date.now()}.pdf`;
     const filePath = path.join(comprobantesDir, fileName);
 
     const doc = new PDFDocument({ margin: 40 });
-    doc.pipe(fs.createWriteStream(filePath));
+    const stream = fs.createWriteStream(filePath);
+
+    // Antes se respondía sin esperar a que el archivo terminara de
+    // escribirse, así que la descarga inmediata podía dar 404.
+    stream.on('finish', () => resolve(fileName));
+    stream.on('error', reject);
+    doc.on('error', reject);
+
+    doc.pipe(stream);
 
     doc.fontSize(22).fillColor('#d32f2f').text('BSP', { align: 'left' }).moveDown(1);
     doc.moveTo(40, 80).lineTo(550, 80).stroke('#d32f2f');
@@ -446,32 +569,30 @@ app.post('/transferir', authMiddleware, async (req, res) => {
     doc.text(`Beneficiario: ${nombre_beneficiario}`);
     doc.text(`Cuenta destino: ${clabe_beneficiario}`);
     doc.text(`Concepto: ${concepto}`);
-    doc.text(`Monto: $${monto}`);
-    doc.text(`Fecha: ${new Date().toLocaleString()}`);
+    doc.text(`Monto: $${Number(monto).toFixed(2)}`);
+    doc.text(`Fecha: ${new Date().toLocaleString('es-MX')}`);
 
     doc.end();
+  });
+}
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-    });
+/** Envía el comprobante por correo. No lanza si el correo no está configurado. */
+async function enviarComprobantePorCorreo(email, fileName) {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) return;
 
-    await transporter.sendMail({
-      from: `BSP <${process.env.EMAIL_USER}>`,
-      to: req.user.email,
-      subject: "Comprobante de transferencia",
-      html: `<p>Tu transferencia se ha realizado correctamente</p>`,
-      attachments: [{ filename: fileName, path: filePath }]
-    });
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+  });
 
-    res.json({ message: "Transferencia realizada con éxito", comprobante: fileName });
-
-  } catch (error) {
-    console.error(error);
-    try { await conn.rollback(); } catch {}
-    res.status(500).json({ message: 'Error al realizar transferencia' });
-  }
-});
+  await transporter.sendMail({
+    from: `BSP <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: 'Comprobante de transferencia',
+    html: '<p>Tu transferencia se ha realizado correctamente.</p>',
+    attachments: [{ filename: fileName, path: path.join(__dirname, 'comprobantes', fileName) }]
+  });
+}
 
 app.get('/comprobantes/:file', authMiddleware, (req, res) => {
   const fileName = req.params.file;

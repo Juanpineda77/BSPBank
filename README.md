@@ -72,33 +72,94 @@ El proyecto maneja datos financieros simulados, así que el control de acceso se
 - **Descarga de comprobantes autenticada y con nombre validado** contra un patrón fijo, de modo que la ruta del archivo no se pueda manipular para salir de su carpeta.
 - **El registro biométrico exige sesión iniciada** y toma el correo del token: así nadie puede vincular su huella a una cuenta ajena.
 - **Contraseñas con `bcrypt`** y consultas parametrizadas en todas las llamadas a MySQL.
+- **Los importes se validan en el servidor:** una transferencia exige un monto positivo, saldo suficiente y respeta el límite por operación. Sin esa validación, un monto negativo invertía la operación y aumentaba el saldo del emisor.
+- **Las transferencias corren en una transacción** con bloqueo de fila (`SELECT … FOR UPDATE`), de modo que dos operaciones simultáneas no puedan dejar la cuenta en números rojos. El comprobante y el correo se generan después de confirmarla: si fallan, no revierten un movimiento que ya ocurrió.
+- **En producción el servidor no arranca sin `JWT_SECRET`**, para no firmar tokens con un valor por defecto conocido, y CORS sólo acepta los orígenes declarados.
 - **Ningún secreto en el repositorio:** `backend/.env` está en `.gitignore` y se documenta con `backend/.env.example`.
 
 ## Cómo correrlo localmente
 
-Requisitos: Node.js 20 o superior, npm y, para el backend completo, una base de datos MySQL.
+Requisitos: Node.js 20 o superior, npm y MySQL 8 (o MariaDB 10.6+).
 
-**Frontend**
+**1. Base de datos**
+
+```bash
+mysql -u root -p -e "CREATE DATABASE bspbank CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root -p bspbank < backend/db/schema.sql
+mysql -u root -p bspbank < backend/db/seed.sql     # datos de ejemplo (opcional)
+```
+
+**2. Backend**
+
+```bash
+cd backend
+npm install
+cp .env.example .env   # completa DB_USER, DB_PASS y JWT_SECRET
+npm start
+```
+
+Escucha en `http://localhost:3000`. `GET /health` responde si la base está conectada.
+
+**3. Frontend**
 
 ```bash
 npm install
 npm start
 ```
 
-Abre `http://localhost:4200`; la app redirige a `/login`. Sin el backend en marcha se pueden ver las pantallas públicas (login, registro, recuperación); las demás necesitan una sesión real.
+Abre `http://localhost:4200`.
 
-**Backend**
+> El repositorio no incluye ningún `.env` real: usa `backend/.env.example` como plantilla.
+
+### Cuentas de prueba
+
+Las crea `backend/db/seed.sql`. Son credenciales públicas de demostración.
+
+| Rol | Correo | Contraseña |
+|---|---|---|
+| Cliente | `cliente@bspbank.mx` | `Cliente123` |
+| Ejecutivo | `ejecutivo@bspbank.mx` | `Ejecutivo123` |
+| Gerente | `gerente@bspbank.mx` | `Gerente123` |
+
+El cliente viene con saldo, movimientos del mes en curso, dos tarjetas y un crédito activo con pagos, para que las pantallas no se vean vacías. Hay un segundo cliente (`cliente2@bspbank.mx`, misma contraseña que el primero) que sirve como cuenta destino para probar una transferencia: usa el número de cuenta **2** en el campo de destino.
+
+## Despliegue
+
+La aplicación son dos piezas independientes: el frontend es estático y el backend necesita Node y MySQL.
+
+**Backend.** Define estas variables en el proveedor (Railway, Render, Fly…):
+
+| Variable | Para qué |
+|---|---|
+| `NODE_ENV=production` | Exige `JWT_SECRET` y restringe CORS |
+| `DB_HOST` `DB_PORT` `DB_USER` `DB_PASS` `DB_NAME` | Conexión a MySQL |
+| `JWT_SECRET` | Firma de los tokens; genera uno con `openssl rand -base64 48` |
+| `APP_URL` | URL pública del frontend |
+| `CORS_ORIGINS` | Orígenes permitidos, separados por comas |
+| `RP_ID` / `WEBAUTHN_ORIGIN` | Dominio y origen para WebAuthn (por defecto se derivan de `APP_URL`) |
+
+Carga el esquema apuntando a la base del proveedor:
 
 ```bash
-cd backend
-npm install
-cp .env.example .env   # completa tus credenciales de MySQL, JWT y correo
-node server.js
+mysql -h HOST -u USER -p NOMBRE_DB < backend/db/schema.sql
 ```
 
-El backend escucha en `http://localhost:3000`.
+`schema.sql` no crea ni borra la base de datos, precisamente para que se pueda ejecutar contra una base administrada donde no se tiene ese permiso.
 
-> El repositorio no incluye ningún `.env` real ni credenciales: usa `backend/.env.example` como plantilla.
+**Frontend.** Pon la URL pública del backend en `src/environments/environment.prod.ts`, compila y publica el contenido de `dist/BSPBank/browser` en cualquier hosting estático:
+
+```bash
+npm run build
+```
+
+Al ser una SPA, el servidor debe redirigir las rutas desconocidas a `index.html`; si no, recargar en `/cliente` devuelve 404.
+
+**Notas para producción:**
+
+- **WebAuthn exige HTTPS** (salvo en `localhost`) y que `RP_ID` sea exactamente el dominio del frontend. Si no coinciden, el navegador rechaza la credencial.
+- El **almacén de challenges de WebAuthn vive en memoria**, así que sólo funciona con una instancia del backend. Con varias réplicas hay que moverlo a Redis o a la base de datos.
+- Los **comprobantes en PDF se guardan en disco**. En plataformas con sistema de archivos efímero se pierden al reiniciar: para conservarlos habría que usar almacenamiento de objetos (S3 o similar).
+- El correo usa credenciales de Gmail. Si `EMAIL_USER` y `EMAIL_PASS` van vacíos la app funciona igual, sólo no envía correos.
 
 ## Pruebas
 
@@ -134,8 +195,13 @@ src/app/
 ├── app.routes.ts               # Rutas y guards
 └── main.ts                     # Bootstrap, providers e interceptor
 
+src/environments/               # apiUrl por entorno (dev / producción)
+
 backend/
 ├── server.js                   # API Express
+├── db/
+│   ├── schema.sql              # Esquema de la base de datos
+│   └── seed.sql                # Datos de ejemplo (cuentas de prueba)
 └── .env.example                # Plantilla de variables de entorno
 ```
 

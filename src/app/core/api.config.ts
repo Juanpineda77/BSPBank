@@ -1,7 +1,10 @@
+import { environment } from '../../environments/environment';
+
 /**
  * URL base del backend.
  *
- * Se centraliza aquí para no repetir `http://localhost:3000` en cada
- * servicio/componente y poder apuntar a otro entorno con un solo cambio.
+ * Se toma del archivo de entorno para no dejarla fija en el código:
+ * al compilar en producción Angular sustituye `environment.ts` por
+ * `environment.prod.ts` (ver `fileReplacements` en angular.json).
  */
-export const API_URL = 'http://localhost:3000';
+export const API_URL = environment.apiUrl;
